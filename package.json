@@ -2,7 +2,16 @@
   "name": "voyager-edsound-desktop",
   "version": "0.1.0",
   "private": true,
+  "devDependencies": {
+    "@types/styled-components": "^5.1.0",
+    "concurrently": "^5.2.0",
+    "electron": "^8.2.4",
+    "nodemon": "^2.0.3",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1"
+  },
   "dependencies": {
+    "@blueprintjs/core": "^3.26.0",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
@@ -10,14 +19,16 @@
     "@types/node": "^12.0.0",
     "@types/react": "^16.9.0",
     "@types/react-dom": "^16.9.0",
-    "react": "^16.13.1",
-    "react-dom": "^16.13.1",
     "react-scripts": "3.4.1",
+    "styled-components": "^5.1.0",
     "typescript": "~3.7.2"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
+    "start:react": "BROWSER=none react-scripts start",
+    "build:react": "PUBLIC_URL=./ react-scripts build",
+    "build:electron": "tsc -p electron/tsconfig.json",
+    "start:electron": "npm run build:electron && electron ./build/electron.js",
+    "dev:electron": "concurrently 'yarn start:react' 'nodemon --watch electron/electron.ts --exec \"yarn start:electron\"'",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
