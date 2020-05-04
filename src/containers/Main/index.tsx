@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useState, useContext, useRef } from 'react';
 import {
   Button,
   Navbar,
@@ -9,9 +9,7 @@ import {
 
 import LogContext from 'contexts/Log';
 import InfoBar from 'components/InfoBar';
-import FileContainer from 'containers/FileContainer';
-
-import { dialog } from 'helpers/bridge';
+// import FileContainer from 'containers/FileContainer';
 
 import {
   Container,
@@ -23,44 +21,53 @@ import {
   Info,
 } from './styles';
 
-import { setAudioBuffer, startProcess } from 'helpers/sound';
+import processSound from 'helpers/processSound';
+
+import FileInput from 'components/FileInput';
+import Audio from 'components/Audio';
+import VisualizerCanvas from 'components/VisualizerCanvas';
+import StageCanvas from 'components/StageCanvas';
 
 export default function Main() {
   const [fileOpen, setFileOpen] = useState(false);
-  const [error, setError] = useState(false);
+  const [file, setFile] = useState<File>();
   const log = useContext(LogContext);
 
-  useEffect(() => {
-    dialog.onOpenFile(async (data: Buffer | null) => {
-      if (data != null) {
-        await setAudioBuffer(data);
-        setFileOpen(true);
-        setError(false);
-      } else {
-        setFileOpen(false);
-        setError(true);
-      }
-    });
-  }, []);
-
-  useEffect(() => {
-    if (fileOpen) {
-      log.setIcon('tick');
-      log.setText('File opened and ready to be decoded');
-    } else if (error) {
-      log.setIcon('warning-sign');
-      log.setText('No file was selected. Waiting a file to be open...');
-    }
-  }, [error, fileOpen, log]);
+  const visualizerCanvasRef = useRef<HTMLCanvasElement>(null);
+  const stageCanvasRef = useRef<HTMLCanvasElement>(null);
+  const audioRef = useRef<HTMLAudioElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handlerOpenFile = () => {
-    log.setIcon('folder-open');
-    log.setText('Opening file...');
-    dialog.showOpenDialog();
+    fileInputRef.current?.click();
   };
 
-  const foo = () => {
-    startProcess();
+  const handlerOnSelectFile = () => {
+    const files = fileInputRef.current?.files;
+    if (files) {
+      setFile(files[0]);
+      setFileOpen(true);
+      log.setIcon('tick');
+      log.setText('File opened and ready to be decoded');
+    }
+    console.log(file);
+  };
+
+  const handlerPlayAndDecode = () => {
+    const files = fileInputRef.current?.files;
+    if (
+      visualizerCanvasRef.current &&
+      stageCanvasRef.current &&
+      audioRef.current &&
+      files
+    ) {
+      processSound(
+        visualizerCanvasRef.current,
+        stageCanvasRef.current,
+        audioRef.current,
+        files[0]
+      );
+    }
   };
 
   const icon = (
@@ -85,7 +92,14 @@ export default function Main() {
     </Info>
   );
 
-  const fileReadContainer = <FileContainer />;
+  const fileReadContainer = (
+    <>
+      <VisualizerCanvas canvasRef={visualizerCanvasRef} />
+      <StageCanvas canvasRef={stageCanvasRef} width={538} height={400} />
+    </>
+  );
+
+  console.log(noFileOpenInfo, fileReadContainer, fileOpen);
 
   return (
     <>
@@ -103,16 +117,22 @@ export default function Main() {
                   text="Open File"
                   onClick={handlerOpenFile}
                 />
-                <Button
-                  className="bp3-minimal"
-                  icon="document"
-                  text="Create File"
-                  onClick={foo}
-                />
               </Navbar.Group>
+              {fileOpen ? (
+                <Navbar.Group align={Alignment.RIGHT}>
+                  <Button
+                    className="bp3-minimal"
+                    icon="full-stacked-chart"
+                    text="Play and Decode"
+                    onClick={handlerPlayAndDecode}
+                  />
+                </Navbar.Group>
+              ) : null}
             </Navbar>
           </Menu>
           {fileOpen ? fileReadContainer : noFileOpenInfo}
+          <FileInput ref={fileInputRef} onChange={handlerOnSelectFile} />
+          <Audio audioRef={audioRef} />
         </Content>
         <InfoBar />
       </Container>

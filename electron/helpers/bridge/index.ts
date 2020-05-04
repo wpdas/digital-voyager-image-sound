@@ -31,7 +31,8 @@ const setupOpenFileApi = () => {
 
       const [fileDir] = files.filePaths;
       const fileData = await promises.readFile(fileDir);
-      mainWindow.webContents.send(ON_OPEN_FILE, fileData);
+      // mainWindow.webContents.send(ON_OPEN_FILE, fileData);
+      mainWindow.webContents.send(ON_OPEN_FILE, { fileDir, fileData });
     } catch (err) {
       mainWindow.webContents.send(ON_OPEN_FILE, null);
     }
