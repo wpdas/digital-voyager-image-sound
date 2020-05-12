@@ -1,4 +1,4 @@
-import React, { useState, useContext, useRef } from 'react';
+import React, { useContext, useRef, useReducer, useEffect } from 'react';
 import {
   Button,
   Navbar,
@@ -7,54 +7,155 @@ import {
   Icon,
 } from '@blueprintjs/core';
 
+import {
+  BitmapWavHeader,
+  getBitmapHeaderInfo,
+  getTypeIdFromBuffer,
+} from 'voyager-edsound/lib/helpers';
+import { bitmapTypeIds } from 'voyager-edsound/lib/constants';
+
 import LogContext from 'contexts/Log';
-import InfoBar from 'components/InfoBar';
-// import FileContainer from 'containers/FileContainer';
 
 import {
-  Container,
-  // LeftMenu,
-  Content,
-  Menu,
-  Title,
-  Description,
-  Info,
-} from './styles';
+  processSound,
+  onDecodeFinished,
+  clearStage,
+  saveDecodedFile,
+} from 'helpers/processSound';
+import fileToBuffer from 'helpers/fileToBuffer';
 
-import processSound from 'helpers/processSound';
-
+import InfoBar from 'components/InfoBar';
 import FileInput from 'components/FileInput';
 import Audio from 'components/Audio';
 import VisualizerCanvas from 'components/VisualizerCanvas';
 import StageCanvas from 'components/StageCanvas';
 
-export default function Main() {
-  const [fileOpen, setFileOpen] = useState(false);
-  const [file, setFile] = useState<File>();
-  const log = useContext(LogContext);
+import MainReducer, {
+  initialState,
+  AUDIO_FILE_OPENED_ACTION,
+  DECODING_FINISHED_ACTION,
+  DECODING_STARTED_ACTION,
+  IMAGE_FILE_OPENED_ACTION,
+} from './reducer';
 
+import {
+  Container,
+  Content,
+  Menu,
+  Title,
+  Description,
+  Info,
+  MainStage,
+  StageWrapper,
+} from './styles';
+import EncodeImageStatus from 'components/EncodeImageStatus';
+
+const MIN_VISUALIZER_WIDTH = 753;
+
+const Main = React.memo(() => {
+  const [state, dispatch] = useReducer(MainReducer, initialState);
+  const {
+    soundFileOpen,
+    imageFileOpen,
+    imageFile,
+    fileTypeId,
+    soundFileBuffer,
+    bitmapHeader,
+    isDecoding,
+    currentSoundFileDecoded,
+  } = state;
+
+  const log = useContext(LogContext);
   const visualizerCanvasRef = useRef<HTMLCanvasElement>(null);
   const stageCanvasRef = useRef<HTMLCanvasElement>(null);
   const audioRef = useRef<HTMLAudioElement>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const soundFileInputRef = useRef<HTMLInputElement>(null);
+  const imageFileInputRef = useRef<HTMLInputElement>(null);
 
-  const handlerOpenFile = () => {
-    fileInputRef.current?.click();
+  useEffect(() => {
+    onDecodeFinished(() => {
+      // Update state
+      dispatch({
+        type: DECODING_FINISHED_ACTION,
+        payload: { isDecoding: false, currentSoundFileDecoded: true },
+      });
+      log.setIcon('tick');
+      log.setText('Decoding process completed!');
+    });
+  }, [log]);
+
+  // On open sound file to be decoded to image
+  const handlerOpenSoundFile = () => {
+    soundFileInputRef.current?.click();
   };
 
-  const handlerOnSelectFile = () => {
-    const files = fileInputRef.current?.files;
-    if (files) {
-      setFile(files[0]);
-      setFileOpen(true);
+  // On open image file to be encoded to sound
+  const handlerOpenImageFile = () => {
+    imageFileInputRef.current?.click();
+  };
+
+  // On select sound file
+  const handlerOnSelectSoundFile = async () => {
+    const files = soundFileInputRef.current?.files;
+    let fileTypeId: number;
+    let bitmapHeader: BitmapWavHeader | null = null;
+
+    if (files && files.length) {
+      const currentSoundFileBuffer = await fileToBuffer(files[0]);
+      fileTypeId = getTypeIdFromBuffer(currentSoundFileBuffer);
+
+      // If file has Bitmap typeId
+      if (bitmapTypeIds.indexOf(fileTypeId) !== -1) {
+        bitmapHeader = getBitmapHeaderInfo(currentSoundFileBuffer);
+      }
+
+      // Update state
+      dispatch({
+        type: AUDIO_FILE_OPENED_ACTION,
+        payload: {
+          fileTypeId,
+          soundFileBuffer: currentSoundFileBuffer,
+          bitmapHeader,
+          soundFileOpen: true,
+          imageFileOpen: false,
+          imageFile: null,
+          currentSoundFileDecoded: false,
+        },
+      });
+
+      // Clear stage canvas
+      clearStage();
+
       log.setIcon('tick');
       log.setText('File opened and ready to be decoded');
     }
-    console.log(file);
+  };
+
+  // On select image file
+  const handlerOnSelectImageFile = () => {
+    const imageFiles = imageFileInputRef.current?.files;
+    if (imageFiles && imageFiles.length) {
+      // Update state
+      dispatch({
+        type: IMAGE_FILE_OPENED_ACTION,
+        payload: {
+          soundFileBuffer: null,
+          soundFileOpen: false,
+          imageFileOpen: true,
+          imageFile: imageFiles[0],
+          currentSoundFileDecoded: false,
+        },
+      });
+
+      log.setIcon('tick');
+      log.setText(
+        'Image file opened. Select the Bits depth you want to use to encode it.'
+      );
+    }
   };
 
   const handlerPlayAndDecode = () => {
-    const files = fileInputRef.current?.files;
+    const files = soundFileInputRef.current?.files;
     if (
       visualizerCanvasRef.current &&
       stageCanvasRef.current &&
@@ -66,6 +167,34 @@ export default function Main() {
         stageCanvasRef.current,
         audioRef.current,
         files[0]
+      );
+
+      // Update state
+      dispatch({
+        type: DECODING_STARTED_ACTION,
+        payload: { isDecoding: true },
+      });
+      log.setIcon('full-stacked-chart');
+      log.setText('Deconding...');
+    }
+  };
+
+  const handlerOnClickSaveDecodedFile = () => {
+    if (soundFileBuffer != null && fileTypeId != null) {
+      saveDecodedFile();
+
+      log.setIcon('tick');
+      log.setText('Done');
+    }
+  };
+
+  const handlerOnTimeUpdate = (
+    event: React.SyntheticEvent<HTMLAudioElement, Event> | undefined
+  ) => {
+    if (event != null) {
+      log.setTime(
+        Math.round(event.currentTarget.currentTime),
+        Math.round(event.currentTarget.duration)
       );
     }
   };
@@ -80,9 +209,10 @@ export default function Main() {
   const title = <Title>No file opened</Title>;
   const description = (
     <Description>
-      You need to open encoded .wav file
+      Open a .wav file generated by this app and decode it to
       <br />
-      to see the decoded information.
+      get the image stored on its samples or open an image file you want to
+      encode as sound.
     </Description>
   );
 
@@ -93,49 +223,96 @@ export default function Main() {
   );
 
   const fileReadContainer = (
-    <>
-      <VisualizerCanvas canvasRef={visualizerCanvasRef} />
-      <StageCanvas canvasRef={stageCanvasRef} width={538} height={400} />
-    </>
+    <MainStage>
+      <StageWrapper>
+        <VisualizerCanvas
+          canvasRef={visualizerCanvasRef}
+          width={
+            bitmapHeader != null && bitmapHeader?.width >= MIN_VISUALIZER_WIDTH
+              ? bitmapHeader?.width
+              : MIN_VISUALIZER_WIDTH
+          }
+          height={100}
+        />
+        <StageCanvas
+          canvasRef={stageCanvasRef}
+          width={bitmapHeader?.width || 0}
+          height={bitmapHeader?.height || 0}
+        />
+      </StageWrapper>
+    </MainStage>
   );
-
-  console.log(noFileOpenInfo, fileReadContainer, fileOpen);
 
   return (
     <>
       <Container>
-        {/* <LeftMenu></LeftMenu> */}
         <Content>
           <Menu>
             <Navbar className="bp3-dark">
               <Navbar.Group align={Alignment.LEFT}>
-                <Navbar.Heading>Digital Voyager Sound</Navbar.Heading>
+                <Navbar.Heading>Digital Voyager Image Sound</Navbar.Heading>
                 <Navbar.Divider />
+                {!isDecoding ? (
+                  <>
+                    <Button
+                      className="bp3-minimal"
+                      icon="document"
+                      text="Decode Sound File"
+                      onClick={handlerOpenSoundFile}
+                    />
+                    <Navbar.Divider />
+                  </>
+                ) : null}
                 <Button
                   className="bp3-minimal"
                   icon="document"
-                  text="Open File"
-                  onClick={handlerOpenFile}
+                  text="Encode Image File"
+                  onClick={handlerOpenImageFile}
                 />
               </Navbar.Group>
-              {fileOpen ? (
-                <Navbar.Group align={Alignment.RIGHT}>
+              <Navbar.Group align={Alignment.RIGHT}>
+                {soundFileOpen && !isDecoding ? (
                   <Button
                     className="bp3-minimal"
                     icon="full-stacked-chart"
                     text="Play and Decode"
                     onClick={handlerPlayAndDecode}
                   />
-                </Navbar.Group>
-              ) : null}
+                ) : null}
+                {soundFileOpen && !isDecoding && currentSoundFileDecoded ? (
+                  <Button
+                    className="bp3-minimal"
+                    icon="archive"
+                    text="Save Decoded File"
+                    onClick={handlerOnClickSaveDecodedFile}
+                  />
+                ) : null}
+              </Navbar.Group>
             </Navbar>
           </Menu>
-          {fileOpen ? fileReadContainer : noFileOpenInfo}
-          <FileInput ref={fileInputRef} onChange={handlerOnSelectFile} />
-          <Audio audioRef={audioRef} />
+          {soundFileOpen && !imageFileOpen ? fileReadContainer : null}
+          {imageFileOpen && !soundFileOpen && imageFile ? (
+            <EncodeImageStatus file={imageFile} />
+          ) : null}
+          {!imageFileOpen && !soundFileBuffer && !imageFile
+            ? noFileOpenInfo
+            : null}
+          <FileInput
+            ref={soundFileInputRef}
+            accept=".wav"
+            onChange={handlerOnSelectSoundFile}
+          />
+          <FileInput
+            ref={imageFileInputRef}
+            accept="image/*"
+            onChange={handlerOnSelectImageFile}
+          />
+          <Audio audioRef={audioRef} onTimeUpdate={handlerOnTimeUpdate} />
         </Content>
         <InfoBar />
       </Container>
     </>
   );
-}
+});
+
+export default Main;

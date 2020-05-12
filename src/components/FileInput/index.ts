@@ -1,8 +1,12 @@
 import styled from 'styled-components';
 
-const FileInput = styled.input.attrs(() => ({
+interface FileProps {
+  accept: string;
+}
+
+const FileInput = styled.input.attrs(({ accept }: FileProps) => ({
   type: 'file',
-  accept: '.wav',
+  accept,
 }))`
   display: none;
 `;

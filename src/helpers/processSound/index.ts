@@ -1,35 +1,66 @@
-import { getTypeIdFromBuffer } from 'voyager-edsound/lib/helpers';
-import { loadersTypeId } from 'voyager-edsound/lib/constants';
+import { bitmapTypeIds } from 'voyager-edsound/lib/constants';
+import { getLoaderByTypeId, Loader } from 'voyager-edsound/lib/helpers';
+import getBytesFromBuffer from 'voyager-edsound/lib/core/getBytesFromBuffer';
+import saveFile, { BMP_CONTENT_TYPE } from '../saveFile';
 
-const fileReader = new FileReader();
+let handlerOnDecodeFinished = () => {};
+/**
+ * On decode finished handler. This method will be dispatched when the process of decoding
+ * is finished.
+ */
+export const onDecodeFinished = (handler: () => void) => {
+  handlerOnDecodeFinished = handler;
+};
+
+/**
+ * Clear stage (bitmap visualizer)
+ */
+export const clearStage = () => {
+  if (stageContext != null) {
+    stageContext.clearRect(0, 0, canvasWidth, canvasHeight);
+  }
+};
+
+let stageContext: CanvasRenderingContext2D;
+let canvasWidth: number;
+let canvasHeight: number;
+let imageData: ImageData;
+let data: Uint8ClampedArray;
+let currentFileBytes: Uint8Array;
+let currentFileSampleData: Uint8Array;
+
+/**
+ * Init the stage canvas. It must be ready to render bitmap info extracted from audio
+ * @param stageCanvas
+ */
+function initStageProcess(stageCanvas: HTMLCanvasElement) {
+  stageContext = stageCanvas.getContext('2d') || new CanvasRenderingContext2D();
+  canvasWidth = stageCanvas.width;
+  canvasHeight = stageCanvas.height;
+
+  stageContext.clearRect(0, 0, canvasWidth, canvasHeight);
+  imageData = stageContext.getImageData(0, 0, canvasWidth, canvasHeight);
+  data = imageData.data;
+}
+
 let previousAnimationId: number;
-let processInitialized = false;
-
-let audioContext: AudioContext;
-let source: MediaElementAudioSourceNode;
-let analyser: AnalyserNode;
-
-function audioProcess(
+/**
+ * Init audio process canvas. Must be called after initStageProcess.
+ * @param visualizerCanvas
+ * @param audio
+ */
+function initAudioProcess(
   visualizerCanvas: HTMLCanvasElement,
   audio: HTMLAudioElement
 ) {
   const bufferLength = analyser.frequencyBinCount;
   const dataArray = new Uint8Array(bufferLength);
-  console.log('DATA-ARRAY:', dataArray);
 
   const WIDTH = visualizerCanvas.width;
   const HEIGHT = visualizerCanvas.height;
   const visualizerContext =
     visualizerCanvas.getContext('2d') || new CanvasRenderingContext2D();
-  console.log('WIDTH: ', WIDTH, 'HEIGHT: ', HEIGHT);
 
-  const barWidth = (WIDTH / bufferLength) * 13;
-  console.log('BARWIDTH: ', barWidth);
-
-  console.log('TOTAL WIDTH: ', 117 * 10 + 118 * barWidth); // (total space between bars)+(total width of all bars)
-
-  // let barHeight;
-  // let x = 0;
   if (previousAnimationId != null) {
     cancelAnimationFrame(previousAnimationId);
   }
@@ -38,23 +69,20 @@ function audioProcess(
     previousAnimationId = requestAnimationFrame(renderFrame);
 
     analyser.getByteTimeDomainData(dataArray);
-    // draw(Buffer.from(dataArray));
     draw(audio.currentTime, audio.duration);
 
-    visualizerContext.fillStyle = 'rgb(0, 0, 0)';
+    visualizerContext.fillStyle = '#000';
     visualizerContext.fillRect(0, 0, WIDTH, HEIGHT);
-
-    visualizerContext.lineWidth = 0.8;
+    visualizerContext.lineWidth = 1.4;
     visualizerContext.strokeStyle = 'rgb(255, 255, 255)';
-
     visualizerContext.beginPath();
 
-    var sliceWidth = (WIDTH * 1.0) / bufferLength;
-    var x = 0;
+    let sliceWidth = (WIDTH * 1.0) / bufferLength;
+    let x = 0;
 
-    for (var i = 0; i < bufferLength; i++) {
-      var v = dataArray[i] / 128.0;
-      var y = (v * HEIGHT) / 2;
+    for (let i = 0; i < bufferLength; i++) {
+      let v = dataArray[i] / 128.0;
+      let y = (v * HEIGHT) / 2;
 
       if (i === 0) {
         visualizerContext.moveTo(x, y);
@@ -76,117 +104,58 @@ function audioProcess(
   renderFrame();
 }
 
-let foo: Buffer;
-
-let stageContext: CanvasRenderingContext2D;
-let canvasWidth: number;
-let canvasHeight: number;
-let imageData: ImageData;
-let data: Uint8ClampedArray;
-
-function stageProcess(stageCanvas: HTMLCanvasElement) {
-  stageContext = stageCanvas.getContext('2d') || new CanvasRenderingContext2D();
-
-  canvasWidth = stageCanvas.width;
-  canvasHeight = stageCanvas.height;
-
-  h = 0;
-  stageContext.clearRect(0, 0, canvasWidth, canvasHeight);
-
-  imageData = stageContext.getImageData(0, 0, canvasWidth, canvasHeight);
-  data = imageData.data;
-
-  // setTimeout(() => {
-  //   for (var i = 1; i < foo.length; i++) {
-  //     data[i * 4] = foo.readUInt8(i);
-  //     data[i * 4 + 1] = foo.readUInt8(i);
-  //     data[i * 4 + 2] = foo.readUInt8(i);
-  //     data[i * 4 + 3] = 255;
-  //   }
-
-  //   stageContext.putImageData(imageData, 0, 0);
-  // }, 1000);
-}
-
-let h = 0;
 let diff = 0;
-
+/**
+ * Draw the visualizer according to the sound samples
+ * @param currentTime
+ * @param duration
+ */
 function draw(currentTime: number, duration: number) {
-  if (foo != null) {
+  if (currentFileSampleData != null) {
     const percPlayed = (100 * currentTime) / duration;
-    const readBytes = Math.ceil((percPlayed * foo.length) / 100);
+    const readBytes = Math.ceil(
+      (percPlayed * currentFileSampleData.length) / 100
+    );
     const finalAdd = readBytes - diff;
     diff = readBytes;
-    // console.log(
-    //   'Perc played:',
-    //   percPlayed,
-    //   'Read bytes:',
-    //   readBytes,
-    //   foo.length,
-    //   finalAdd
-    // );
 
     if (!isNaN(finalAdd)) {
-      // for (let i = 0; i < readBytes; i++) {
-      //   data[i * 4] = foo.readUInt8(i);
-      //   data[i * 4 + 1] = foo.readUInt8(i);
-      //   data[i * 4 + 2] = foo.readUInt8(i);
-      //   data[i * 4 + 3] = 255;
-      //   h++;
-      // }
-
-      // Metodo mais leve (Bitmap 8 bits)
-      for (let i = 0; i < finalAdd; i++) {
-        data[h * 4] = foo.readUInt8(h);
-        data[h * 4 + 1] = foo.readUInt8(h);
-        data[h * 4 + 2] = foo.readUInt8(h);
-        data[h * 4 + 3] = 255;
-        h++;
+      if (loader != null && loader.decodeChunk != null) {
+        loader.decodeChunk({
+          totalSamplesSize: currentFileSampleData.length,
+          data,
+          imageData: currentFileSampleData,
+          bytesChunk: finalAdd,
+        });
       }
 
       stageContext.putImageData(imageData, 0, 0);
     }
   }
-
-  // if (byteArray.readUInt8(i) != 0)
-  // if (foo != null) {
-  //   for (let i = 0; i < 22050; i++) {
-  //     data[h * 4 + read] = foo.readUInt8(h);
-  //     data[h * 4 + 1 + read] = foo.readUInt8(h);
-  //     data[h * 4 + 2 + read] = foo.readUInt8(h);
-  //     data[h * 4 + 3 + read] = 255;
-  //     h++;
-  //   }
-
-  //   // read += byteArray.length;
-  //   read += 22050;
-
-  //   stageContext.putImageData(imageData, 0, 0);
-  // }
 }
 
-const processSound = async (
+const fileReader = new FileReader();
+let loader: Loader;
+let processInitialized = false;
+let audioContext: AudioContext;
+let source: MediaElementAudioSourceNode;
+let analyser: AnalyserNode;
+/**
+ * Init the audio decoding process and render visualizer and data according to typeId
+ * @param visualizerCanvas
+ * @param stageCanvas
+ * @param audio
+ * @param file
+ * @param typeId
+ */
+export const processSound = async (
   visualizerCanvas: HTMLCanvasElement,
   stageCanvas: HTMLCanvasElement,
   audio: HTMLAudioElement,
   file: File
 ) => {
-  audio.src = URL.createObjectURL(file);
-  console.log(stageCanvas);
-
   if (!processInitialized) {
     processInitialized = true;
-
-    fileReader.onload = () => {
-      const arrayBuffer = fileReader.result as ArrayBuffer;
-
-      foo = Buffer.from(arrayBuffer);
-      const sampleDataBuffer: Buffer = Buffer.alloc(foo.length);
-      foo.copy(sampleDataBuffer, 0, 49);
-
-      const typeId = getTypeIdFromBuffer(Buffer.from(arrayBuffer));
-      console.log(typeId, typeId === loadersTypeId.BITMAP_1BIT_PP);
-    };
 
     audioContext = new AudioContext();
     source = audioContext.createMediaElementSource(audio);
@@ -195,22 +164,57 @@ const processSound = async (
     analyser = audioContext.createAnalyser();
     source.connect(analyser);
     analyser.connect(audioContext.destination);
-    analyser.fftSize = 4096;
+    analyser.fftSize = 4096 / 2;
 
     // Events
     audio.onended = () => {
-      // console.log(data);
-      console.log('FINAL:');
+      handlerOnDecodeFinished();
+      setTimeout(() => {
+        cancelAnimationFrame(previousAnimationId);
+        previousAnimationId = NaN;
+      }, 200);
+    };
+
+    fileReader.onload = () => {
+      // Load file bytes (without wav header)
+      currentFileBytes = getBytesFromBuffer(
+        Buffer.from(fileReader.result as ArrayBuffer)
+      );
+      // Get typeId.
+      const fileTypeId = currentFileBytes[0];
+      // Initialize the recomended Loader to decode audio data
+      loader = getLoaderByTypeId(fileTypeId);
+      if (loader != null) {
+        // Set data (extracted from samples). This will return only samples without wav header and loader header
+        currentFileSampleData = loader.getSampleData(currentFileBytes);
+      }
+
+      // Audio Process
+      initAudioProcess(visualizerCanvas, audio);
     };
   }
   fileReader.readAsArrayBuffer(file);
 
-  // Stage Process
-  stageProcess(stageCanvas);
+  // Set audio source
+  audio.src = URL.createObjectURL(file);
 
-  // Audio Process
-  audioProcess(visualizerCanvas, audio);
-  // console.log(visualizerCanvas, audio, audioProcess);
+  // Stage Process
+  initStageProcess(stageCanvas);
 };
 
-export default processSound;
+/**
+ * Open dialog for save decoded file
+ */
+export const saveDecodedFile = async () => {
+  // If the content is bitmap
+  if (
+    loader != null &&
+    bitmapTypeIds.indexOf(loader.header.getHeaderTypeId()) !== -1
+  ) {
+    saveFile(
+      loader.decode(currentFileBytes) as Buffer,
+      'image',
+      BMP_CONTENT_TYPE
+    );
+  }
+};

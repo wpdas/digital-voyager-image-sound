@@ -6,12 +6,6 @@ export const Container = styled.div`
   height: 100vh;
 `;
 
-export const LeftMenu = styled.div`
-  width: 220px;
-  background: #394b59;
-  height: 100vh;
-`;
-
 export const Content = styled.div`
   flex: 1;
 `;
@@ -29,6 +23,24 @@ export const Description = styled.div`
 `;
 
 export const Info = styled.div`
-  margin-top: 25vh;
+  margin-top: 32vh;
   user-select: none;
+`;
+
+export const MainStage = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 92%;
+  justify-content: center;
+`;
+
+export const StageWrapper = styled.div`
+  background: #000;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 753px;
+  min-height: 446px;
+  align-self: center;
+  border: 1px solid #000;
 `;
