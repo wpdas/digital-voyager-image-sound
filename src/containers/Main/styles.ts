@@ -30,7 +30,8 @@ export const Info = styled.div`
 export const MainStage = styled.div`
   display: flex;
   flex-direction: column;
-  height: 92%;
+  /* height: 92%; */
+  height: calc(100% - 25px);
   justify-content: center;
 `;
 

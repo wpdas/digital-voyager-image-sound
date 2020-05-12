@@ -56,6 +56,7 @@ const Main = React.memo(() => {
   const [state, dispatch] = useReducer(MainReducer, initialState);
   const {
     soundFileOpen,
+    soundFile,
     imageFileOpen,
     imageFile,
     fileTypeId,
@@ -117,6 +118,7 @@ const Main = React.memo(() => {
           soundFileBuffer: currentSoundFileBuffer,
           bitmapHeader,
           soundFileOpen: true,
+          soundFile: files[0],
           imageFileOpen: false,
           imageFile: null,
           currentSoundFileDecoded: false,
@@ -141,6 +143,7 @@ const Main = React.memo(() => {
         payload: {
           soundFileBuffer: null,
           soundFileOpen: false,
+          soundFile: null,
           imageFileOpen: true,
           imageFile: imageFiles[0],
           currentSoundFileDecoded: false,
@@ -155,18 +158,17 @@ const Main = React.memo(() => {
   };
 
   const handlerPlayAndDecode = () => {
-    const files = soundFileInputRef.current?.files;
     if (
       visualizerCanvasRef.current &&
       stageCanvasRef.current &&
       audioRef.current &&
-      files
+      soundFile
     ) {
       processSound(
         visualizerCanvasRef.current,
         stageCanvasRef.current,
         audioRef.current,
-        files[0]
+        soundFile
       );
 
       // Update state
@@ -261,14 +263,14 @@ const Main = React.memo(() => {
                       onClick={handlerOpenSoundFile}
                     />
                     <Navbar.Divider />
+                    <Button
+                      className="bp3-minimal"
+                      icon="document"
+                      text="Encode Image File"
+                      onClick={handlerOpenImageFile}
+                    />
                   </>
                 ) : null}
-                <Button
-                  className="bp3-minimal"
-                  icon="document"
-                  text="Encode Image File"
-                  onClick={handlerOpenImageFile}
-                />
               </Navbar.Group>
               <Navbar.Group align={Alignment.RIGHT}>
                 {soundFileOpen && !isDecoding ? (

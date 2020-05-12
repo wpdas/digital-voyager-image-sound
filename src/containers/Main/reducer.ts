@@ -15,6 +15,7 @@ interface State {
   imageFileOpen?: boolean;
   imageFile?: File | null;
   soundFileOpen?: boolean;
+  soundFile?: File | null;
   fileTypeId?: number;
   soundFileBuffer?: Buffer | null;
   bitmapHeader?: BitmapWavHeader | null;
@@ -26,6 +27,7 @@ export const initialState: State = {
   imageFileOpen: false,
   imageFile: null,
   soundFileOpen: false,
+  soundFile: null,
   fileTypeId: NaN,
   soundFileBuffer: null,
   bitmapHeader: null,
