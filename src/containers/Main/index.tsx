@@ -29,6 +29,7 @@ import FileInput from 'components/FileInput';
 import Audio from 'components/Audio';
 import VisualizerCanvas from 'components/VisualizerCanvas';
 import StageCanvas from 'components/StageCanvas';
+import EncodeImageStatus from 'components/EncodeImageStatus';
 
 import MainReducer, {
   initialState,
@@ -47,8 +48,10 @@ import {
   Info,
   MainStage,
   StageWrapper,
+  AppLogo,
 } from './styles';
-import EncodeImageStatus from 'components/EncodeImageStatus';
+
+import logo from '../../assets/svgs/app_icon.svg';
 
 const MIN_VISUALIZER_WIDTH = 753;
 
@@ -252,6 +255,7 @@ const Main = React.memo(() => {
           <Menu>
             <Navbar className="bp3-dark">
               <Navbar.Group align={Alignment.LEFT}>
+                <AppLogo src={logo} width={34} />
                 <Navbar.Heading>Digital Voyager Image Sound</Navbar.Heading>
                 <Navbar.Divider />
                 {!isDecoding ? (

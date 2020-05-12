@@ -14,6 +14,10 @@ export const Menu = styled.div`
   user-select: none;
 `;
 
+export const AppLogo = styled.img`
+  margin-right: 12px;
+`;
+
 export const Title = styled.div`
   color: #f5f8fa;
 `;
