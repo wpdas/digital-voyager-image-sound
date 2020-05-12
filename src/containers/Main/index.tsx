@@ -37,6 +37,7 @@ import MainReducer, {
   DECODING_FINISHED_ACTION,
   DECODING_STARTED_ACTION,
   IMAGE_FILE_OPENED_ACTION,
+  RESET_ACTION,
 } from './reducer';
 
 import {
@@ -90,7 +91,23 @@ const Main = React.memo(() => {
 
   // On open sound file to be decoded to image
   const handlerOpenSoundFile = () => {
-    soundFileInputRef.current?.click();
+    // If Encode image component is activated
+    if (imageFileOpen) {
+      // Update state
+      dispatch({
+        type: RESET_ACTION,
+        payload: {
+          soundFileOpen: false,
+          imageFileOpen: false,
+          imageFile: null,
+          currentSoundFileDecoded: false,
+        },
+      });
+    }
+
+    setTimeout(() => {
+      soundFileInputRef.current?.click();
+    }, 500);
   };
 
   // On open image file to be encoded to sound

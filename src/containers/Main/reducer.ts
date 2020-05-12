@@ -1,11 +1,13 @@
 import { BitmapWavHeader } from 'voyager-edsound/lib/helpers';
 
+export const RESET_ACTION = 'RESET_ACTION';
 export const AUDIO_FILE_OPENED_ACTION = 'AUDIO_FILE_OPENED_ACTION';
 export const IMAGE_FILE_OPENED_ACTION = 'IMAGE_FILE_OPENED_ACTION';
 export const DECODING_STARTED_ACTION = 'DECODING_STARTED_ACTION';
 export const DECODING_FINISHED_ACTION = 'DECODING_FINISHED';
 
 type ActionTypes =
+  | typeof RESET_ACTION
   | typeof AUDIO_FILE_OPENED_ACTION
   | typeof IMAGE_FILE_OPENED_ACTION
   | typeof DECODING_STARTED_ACTION
@@ -42,6 +44,11 @@ interface Action {
 
 const MainReducer = (state: State, action: Action) => {
   switch (action.type) {
+    case RESET_ACTION:
+      return {
+        ...state,
+        ...action.payload,
+      } as State;
     case AUDIO_FILE_OPENED_ACTION:
       return {
         ...state,

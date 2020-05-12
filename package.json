@@ -28,6 +28,7 @@
   },
   "scripts": {
     "start:react-only": "react-scripts start",
+    "build:react-only": "react-scripts build",
     "start:react": "BROWSER=none react-scripts start",
     "build:react": "PUBLIC_URL=./ react-scripts build",
     "build:electron": "tsc -p electron/tsconfig.json",
