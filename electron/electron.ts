@@ -7,7 +7,7 @@ function createWindow() {
   // Create the browser window.electron
   mainWindow = new BrowserWindow({
     width: 1116,
-    height: 600,
+    height: 634,
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: true, // preload can only be used if contextIsolation is enabled
@@ -38,26 +38,6 @@ function createWindow() {
   ];
   const menu = Menu.buildFromTemplate(template);
   Menu.setApplicationMenu(menu);
-
-  // // Open file
-  // async function openFile() {
-  //   const files = await dialog.showOpenDialog(
-  //     mainWindow as Electron.BrowserWindow,
-  //     {
-  //       properties: ['openFile'],
-  //       filters: [
-  //         { name: 'Encoded Voyager Audio', extensions: ['wav', 'wave'] },
-  //       ],
-  //     }
-  //   );
-
-  //   if (!files) return;
-
-  //   const [fileDir] = files.filePaths;
-  //   console.log('File path:', fileDir);
-  //   const fileContent = await promises.readFile(fileDir);
-  //   console.log('File size:', fileContent.length);
-  // }
 
   // Open the DevTools.
   mainWindow.webContents.openDevTools();

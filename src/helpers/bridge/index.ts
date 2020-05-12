@@ -1,5 +1,7 @@
 /**
  * Must be used by UI/React side only
+ *
+ * This is a way of using Node side resources
  */
 
 /**
@@ -17,4 +19,19 @@ const dialog = {
   onOpenFile: window.api.onOpenFile,
 };
 
-export { dialog };
+/**
+ * Save file API
+ */
+const saveFile = {
+  /**
+   * Decode file buffer and open dialog to save file
+   */
+  decodeAndSaveFile: window.api.decodeAndSaveFile,
+
+  /**
+   * On decoded file saved handler
+   */
+  onDecodeAndSaveFileCompleted: window.api.onDecodeAndSaveFileCompleted,
+};
+
+export { dialog, saveFile };

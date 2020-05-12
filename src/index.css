@@ -24,3 +24,11 @@ a {
 * {
   outline: none;
 }
+
+p {
+  user-select: none;
+}
+
+.bp3-dark .bp3-button.bp3-minimal {
+  outline: none;
+}
