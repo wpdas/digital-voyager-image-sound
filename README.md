@@ -21,6 +21,10 @@ You can check this demo (link below) and learn how to use the features.
 
 [Digital Voyager Image Sound - Youtube](https://youtu.be/MbtW5LxS56A)
 
+Here is some audio files you can play and decode using the app as well:
+
+[Download audio files to test](https://wendersonpdas-public-github-files.s3-us-west-2.amazonaws.com/dvis_example_sounds.zip)
+
 ### Decoding demo - Mercury
 
 ![Mercury](https://wendersonpdas-public-github-files.s3-us-west-2.amazonaws.com/voyager-edsound-gif-1.gif)</br>
