@@ -2,6 +2,8 @@
 
 # Digital Voyager Image Sound
 
+Live Application: https://wpdas.github.io/digital-voyager-image-sound/
+
 This is a personal application I've been working and the main idea is based on The Voyager Golden Record, a disc created by NASA (National Aeronautics and Space Administration) that was sent into space with the Voyager spacecraft in the 1970s. At that time, there were no digital files like today (JPG, TIFF, etc.) so engineers had to use the phonographic resources to encode the images. It took me a while to understand the decoding information on the disc cover and, once I got it, I created the code that encodes and decodes audio samples but in digital format (binary information).
 
 You can use the live app to encode image to sound (wav format) or decode sound to image. The app is compatible with almost all images format.
