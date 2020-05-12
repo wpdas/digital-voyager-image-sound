@@ -1,4 +1,4 @@
-import { BitmapWavHeader } from 'voyager-edsound/lib/helpers';
+import { BitmapWavHeader } from 'digital-voyager-image-sound-core/lib/helpers';
 
 export const RESET_ACTION = 'RESET_ACTION';
 export const AUDIO_FILE_OPENED_ACTION = 'AUDIO_FILE_OPENED_ACTION';

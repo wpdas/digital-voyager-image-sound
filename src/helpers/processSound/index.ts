@@ -1,6 +1,9 @@
-import { bitmapTypeIds } from 'voyager-edsound/lib/constants';
-import { getLoaderByTypeId, Loader } from 'voyager-edsound/lib/helpers';
-import getBytesFromBuffer from 'voyager-edsound/lib/core/getBytesFromBuffer';
+import { bitmapTypeIds } from 'digital-voyager-image-sound-core/lib/constants';
+import {
+  getLoaderByTypeId,
+  Loader,
+} from 'digital-voyager-image-sound-core/lib/helpers';
+import getBytesFromBuffer from 'digital-voyager-image-sound-core/lib/core/getBytesFromBuffer';
 import saveFile, { BMP_CONTENT_TYPE } from '../saveFile';
 
 let handlerOnDecodeFinished = () => {};

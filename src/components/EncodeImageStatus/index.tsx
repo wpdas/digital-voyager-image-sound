@@ -1,8 +1,11 @@
 import React from 'react';
 import { Icon, Navbar, Button, H4 } from '@blueprintjs/core';
-import { getLoaderByTypeId, Loader } from 'voyager-edsound/lib/helpers';
-import { loadersTypeId } from 'voyager-edsound/lib/constants';
-import writeSampleBytes from 'voyager-edsound/lib/core/writeSampleBytes';
+import {
+  getLoaderByTypeId,
+  Loader,
+} from 'digital-voyager-image-sound-core/lib/helpers';
+import { loadersTypeId } from 'digital-voyager-image-sound-core/lib/constants';
+import writeSampleBytes from 'digital-voyager-image-sound-core/lib/core/writeSampleBytes';
 import uint8ArrayToArray from 'helpers/uint8arrayToArray';
 import imageToBitmap from 'helpers/imageToBitmap';
 import saveFile, { WAV_CONTENT_TYPE } from 'helpers/saveFile';

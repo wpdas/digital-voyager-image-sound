@@ -11,8 +11,8 @@ import {
   BitmapWavHeader,
   getBitmapHeaderInfo,
   getTypeIdFromBuffer,
-} from 'voyager-edsound/lib/helpers';
-import { bitmapTypeIds } from 'voyager-edsound/lib/constants';
+} from 'digital-voyager-image-sound-core/lib/helpers';
+import { bitmapTypeIds } from 'digital-voyager-image-sound-core/lib/constants';
 
 import LogContext from 'contexts/Log';
 

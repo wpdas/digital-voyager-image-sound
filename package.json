@@ -1,5 +1,6 @@
 {
-  "name": "voyager-edsound-desktop",
+  "name": "digital-voyager-image-sound",
+  "homepage": "http://Wpdas.github.io/digital-voyager-image-sound",
   "version": "0.1.0",
   "private": true,
   "devDependencies": {
@@ -7,6 +8,7 @@
     "@types/styled-components": "^5.1.0",
     "concurrently": "^5.2.0",
     "electron": "^8.2.4",
+    "gh-pages": "^2.2.0",
     "nodemon": "^2.0.3",
     "react": "^16.13.1",
     "react-dom": "^16.13.1"
@@ -35,7 +37,9 @@
     "start:electron": "npm run build:electron && electron ./build/electron.js",
     "dev:electron": "concurrently 'yarn start:react' 'nodemon --watch electron/* --exec \"yarn start:electron\"'",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "predeploy": "npm run build:react-only",
+    "deploy": "gh-pages -d build"
   },
   "eslintConfig": {
     "extends": "react-app"
