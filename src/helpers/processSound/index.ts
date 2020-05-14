@@ -1,10 +1,19 @@
-import { bitmapTypeIds } from 'digital-voyager-image-sound-core/lib/constants';
+import {
+  bitmapTypeIds,
+  loadersTypeId,
+} from 'digital-voyager-image-sound-core/lib/constants';
 import {
   getLoaderByTypeId,
   Loader,
+  writeBitmapLoaderHeader,
 } from 'digital-voyager-image-sound-core/lib/helpers';
 import getBytesFromBuffer from 'digital-voyager-image-sound-core/lib/core/getBytesFromBuffer';
 import saveFile, { BMP_CONTENT_TYPE } from '../saveFile';
+import {
+  MIN_STAGE_WIDTH,
+  MIN_STAGE_HEIGHT,
+  UNKNOWN_BITMAP_TYPE_ID,
+} from '../../constants';
 
 let handlerOnDecodeFinished = () => {};
 /**
@@ -185,13 +194,32 @@ export const processSound = async (
       );
       // Get typeId.
       const fileTypeId = currentFileBytes[0];
-      // Initialize the recomended Loader to decode audio data
-      loader = getLoaderByTypeId(fileTypeId);
-      if (loader != null) {
-        // Set data (extracted from samples). This will return only samples without wav header and loader header
-        currentFileSampleData = loader.getSampleData(currentFileBytes);
+
+      if (bitmapTypeIds.indexOf(fileTypeId) !== -1) {
+        // Initialize the recomended Loader to decode audio data
+        loader = getLoaderByTypeId(fileTypeId);
+        if (loader != null) {
+          // Set data (extracted from samples). This will return only samples without wav header and loader header
+          currentFileSampleData = loader.getSampleData(currentFileBytes);
+        }
+      } else {
+        // Force Bitmap 8 bpp when it's a unknown audio file
+        loader = getLoaderByTypeId(UNKNOWN_BITMAP_TYPE_ID);
+        if (loader != null) {
+          const unknownAudioBytesWithHeader = writeBitmapLoaderHeader(
+            currentFileBytes,
+            loadersTypeId.BITMAP,
+            MIN_STAGE_WIDTH,
+            MIN_STAGE_HEIGHT
+          );
+          currentFileSampleData = loader.getSampleData(
+            unknownAudioBytesWithHeader
+          );
+        }
       }
 
+      // Stage Process
+      initStageProcess(stageCanvas);
       // Audio Process
       initAudioProcess(visualizerCanvas, audio);
     };
@@ -200,9 +228,6 @@ export const processSound = async (
 
   // Set audio source
   audio.src = URL.createObjectURL(file);
-
-  // Stage Process
-  initStageProcess(stageCanvas);
 };
 
 /**

@@ -1,7 +1,7 @@
 {
   "name": "digital-voyager-image-sound",
   "homepage": "http://Wpdas.github.io/digital-voyager-image-sound",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "devDependencies": {
     "@types/bmp-js": "^0.1.0",
@@ -24,6 +24,7 @@
     "@types/react-dom": "^16.9.0",
     "bmp-js": "^0.1.0",
     "jimp": "^0.10.3",
+    "react-device-detect": "^1.12.1",
     "react-scripts": "3.4.1",
     "styled-components": "^5.1.0",
     "typescript": "~3.7.2"

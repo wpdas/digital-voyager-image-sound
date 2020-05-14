@@ -7,5 +7,11 @@ export const Container = styled.div`
 `;
 
 export const Canvas = styled.canvas`
+  max-width: 58%;
   background: #000000;
+
+  @media (max-width: 700px) {
+    flex-direction: column;
+    max-width: 90%;
+  }
 `;

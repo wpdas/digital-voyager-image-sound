@@ -1,6 +1,7 @@
 import React, { createContext, useState } from 'react';
 import { IconName } from '@blueprintjs/core';
 import secondsToMMSS from 'helpers/secondsToMMSS';
+import packageInfo from '../../package.json';
 
 interface LogProviderValue {
   readonly icon: IconName;
@@ -14,7 +15,7 @@ interface LogProviderValue {
 
 const defaultValue: LogProviderValue = {
   icon: 'cube',
-  text: 'Waiting file to be open...',
+  text: `v${packageInfo.version}`,
   currentTime: '00:00',
   duration: '00:00',
   setText: () => new Error('setText should be defined'),
@@ -32,7 +33,7 @@ export const LogProvider: React.FC<LogProviderProps> = ({
   children,
 }: LogProviderProps) => {
   const [icon, setIcon] = useState<IconName>('cube');
-  const [text, setText] = useState('Waiting file to be open');
+  const [text, setText] = useState(`v${packageInfo.version}`);
   const [currentTime, setCurrentTime] = useState('00:00');
   const [duration, setDuration] = useState('00:00');
   const valueBody: LogProviderValue = {
