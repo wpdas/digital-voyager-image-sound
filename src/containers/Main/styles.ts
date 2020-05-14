@@ -16,6 +16,7 @@ export const Menu = styled.div`
 
 export const AppLogo = styled.img`
   margin-right: 12px;
+  cursor: pointer;
 `;
 
 export const Title = styled.div`
@@ -29,6 +30,10 @@ export const Description = styled.div`
 export const Info = styled.div`
   margin-top: 32vh;
   user-select: none;
+
+  @media (max-width: 700px) {
+    margin-top: 25vh;
+  }
 `;
 
 export const MainStage = styled.div`
@@ -45,7 +50,12 @@ export const StageWrapper = styled.div`
   flex-direction: column;
   justify-content: center;
   min-width: 753px;
+  max-width: 96%;
   min-height: 446px;
   align-self: center;
   border: 1px solid #000;
+
+  @media (max-width: 700px) {
+    min-width: unset;
+  }
 `;

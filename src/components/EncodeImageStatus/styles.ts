@@ -9,6 +9,12 @@ export const Container = styled.div`
   max-width: 850px;
   height: 400px;
   flex-direction: column;
+
+  @media (max-width: 700px) {
+    min-width: unset;
+    margin-left: 12px;
+    margin-right: 12px;
+  }
 `;
 
 export const Paragraph = styled.p`

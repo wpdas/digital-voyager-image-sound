@@ -12,4 +12,10 @@ export const Canvas = styled.canvas`
   background: #000;
   transform: rotate(180deg);
   border-top: 2px solid #000;
+  max-width: 100%;
+
+  @media (max-width: 700px) {
+    flex-direction: column;
+    min-height: 100px;
+  }
 `;
