@@ -1,27 +1,27 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "6640dc5a3af5aaadc759c3ca4327dc03",
+    "revision": "3b565168607f7f63b8f9392ed53890e7",
     "url": "/digital-voyager-image-sound/index.html"
   },
   {
-    "revision": "57e0a3bd884b139a172c",
+    "revision": "bb712c4f7851b986aa7d",
     "url": "/digital-voyager-image-sound/static/css/2.d8e357bd.chunk.css"
   },
   {
-    "revision": "5e78e06b0a3f73589503",
-    "url": "/digital-voyager-image-sound/static/css/main.f986bfaa.chunk.css"
+    "revision": "26946a309b9d9d75f41d",
+    "url": "/digital-voyager-image-sound/static/css/main.1cfec8f0.chunk.css"
   },
   {
-    "revision": "57e0a3bd884b139a172c",
-    "url": "/digital-voyager-image-sound/static/js/2.3130f3b0.chunk.js"
+    "revision": "bb712c4f7851b986aa7d",
+    "url": "/digital-voyager-image-sound/static/js/2.f2cc22a1.chunk.js"
   },
   {
-    "revision": "5d867c2be5a9baab80acccff09f9693c",
-    "url": "/digital-voyager-image-sound/static/js/2.3130f3b0.chunk.js.LICENSE.txt"
+    "revision": "3741ffbdf9d171fc6610d051a2755497",
+    "url": "/digital-voyager-image-sound/static/js/2.f2cc22a1.chunk.js.LICENSE.txt"
   },
   {
-    "revision": "5e78e06b0a3f73589503",
-    "url": "/digital-voyager-image-sound/static/js/main.e06c4d9a.chunk.js"
+    "revision": "26946a309b9d9d75f41d",
+    "url": "/digital-voyager-image-sound/static/js/main.9dff0e53.chunk.js"
   },
   {
     "revision": "affd3a504a587591bd7f",

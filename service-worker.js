@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "/digital-voyager-image-sound/precache-manifest.5d923fc9211bf9bab142b0ec9435d0d6.js"
+  "/digital-voyager-image-sound/precache-manifest.d89954cbe8cfebcc17feb8c006e673f3.js"
 );
 
 self.addEventListener('message', (event) => {

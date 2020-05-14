@@ -1,19 +1,19 @@
 {
   "files": {
-    "main.css": "/digital-voyager-image-sound/static/css/main.f986bfaa.chunk.css",
-    "main.js": "/digital-voyager-image-sound/static/js/main.e06c4d9a.chunk.js",
-    "main.js.map": "/digital-voyager-image-sound/static/js/main.e06c4d9a.chunk.js.map",
+    "main.css": "/digital-voyager-image-sound/static/css/main.1cfec8f0.chunk.css",
+    "main.js": "/digital-voyager-image-sound/static/js/main.9dff0e53.chunk.js",
+    "main.js.map": "/digital-voyager-image-sound/static/js/main.9dff0e53.chunk.js.map",
     "runtime-main.js": "/digital-voyager-image-sound/static/js/runtime-main.1995d11d.js",
     "runtime-main.js.map": "/digital-voyager-image-sound/static/js/runtime-main.1995d11d.js.map",
     "static/css/2.d8e357bd.chunk.css": "/digital-voyager-image-sound/static/css/2.d8e357bd.chunk.css",
-    "static/js/2.3130f3b0.chunk.js": "/digital-voyager-image-sound/static/js/2.3130f3b0.chunk.js",
-    "static/js/2.3130f3b0.chunk.js.map": "/digital-voyager-image-sound/static/js/2.3130f3b0.chunk.js.map",
+    "static/js/2.f2cc22a1.chunk.js": "/digital-voyager-image-sound/static/js/2.f2cc22a1.chunk.js",
+    "static/js/2.f2cc22a1.chunk.js.map": "/digital-voyager-image-sound/static/js/2.f2cc22a1.chunk.js.map",
     "index.html": "/digital-voyager-image-sound/index.html",
-    "precache-manifest.5d923fc9211bf9bab142b0ec9435d0d6.js": "/digital-voyager-image-sound/precache-manifest.5d923fc9211bf9bab142b0ec9435d0d6.js",
+    "precache-manifest.d89954cbe8cfebcc17feb8c006e673f3.js": "/digital-voyager-image-sound/precache-manifest.d89954cbe8cfebcc17feb8c006e673f3.js",
     "service-worker.js": "/digital-voyager-image-sound/service-worker.js",
     "static/css/2.d8e357bd.chunk.css.map": "/digital-voyager-image-sound/static/css/2.d8e357bd.chunk.css.map",
-    "static/css/main.f986bfaa.chunk.css.map": "/digital-voyager-image-sound/static/css/main.f986bfaa.chunk.css.map",
-    "static/js/2.3130f3b0.chunk.js.LICENSE.txt": "/digital-voyager-image-sound/static/js/2.3130f3b0.chunk.js.LICENSE.txt",
+    "static/css/main.1cfec8f0.chunk.css.map": "/digital-voyager-image-sound/static/css/main.1cfec8f0.chunk.css.map",
+    "static/js/2.f2cc22a1.chunk.js.LICENSE.txt": "/digital-voyager-image-sound/static/js/2.f2cc22a1.chunk.js.LICENSE.txt",
     "static/media/app_icon.svg": "/digital-voyager-image-sound/static/media/app_icon.ecf81f5f.svg",
     "static/media/blueprint-icons.css": "/digital-voyager-image-sound/static/media/icons-20.cef8cdbb.woff",
     "static/media/image_preview.jpg": "/digital-voyager-image-sound/static/media/image_preview.d0db360c.jpg"
@@ -21,8 +21,8 @@
   "entrypoints": [
     "static/js/runtime-main.1995d11d.js",
     "static/css/2.d8e357bd.chunk.css",
-    "static/js/2.3130f3b0.chunk.js",
-    "static/css/main.f986bfaa.chunk.css",
-    "static/js/main.e06c4d9a.chunk.js"
+    "static/js/2.f2cc22a1.chunk.js",
+    "static/css/main.1cfec8f0.chunk.css",
+    "static/js/main.9dff0e53.chunk.js"
   ]
 }
