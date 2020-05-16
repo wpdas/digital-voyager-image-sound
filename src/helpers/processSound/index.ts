@@ -1,7 +1,4 @@
-import {
-  bitmapTypeIds,
-  loadersTypeId,
-} from 'digital-voyager-image-sound-core/lib/constants';
+import { bitmapTypeIds } from 'digital-voyager-image-sound-core/lib/constants';
 import {
   getLoaderByTypeId,
   Loader,
@@ -208,7 +205,7 @@ export const processSound = async (
         if (loader != null) {
           const unknownAudioBytesWithHeader = writeBitmapLoaderHeader(
             currentFileBytes,
-            loadersTypeId.BITMAP,
+            UNKNOWN_BITMAP_TYPE_ID,
             MIN_STAGE_WIDTH,
             MIN_STAGE_HEIGHT
           );
