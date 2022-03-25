@@ -7,7 +7,7 @@
     "@types/bmp-js": "^0.1.0",
     "@types/styled-components": "^5.1.0",
     "concurrently": "^5.2.0",
-    "electron": "^8.2.4",
+    "electron": "^13.6.6",
     "gh-pages": "^2.2.0",
     "nodemon": "^2.0.3",
     "react": "^16.13.1",
